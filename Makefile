@@ -1,7 +1,8 @@
 WASI_SDK_VERSION:=12.0
 WASI_SDK_TAG:=12
 
-CC:=wasi-sdk/bin/clang --sysroot wasi-sdk/share/wasi-sysroot
+CC:=$(MSWASM_LLVM_BUILD)/bin/clang --target=wasm32-wasi --sysroot $(MSWASM_WASI_LIBC)/sysroot \
+	-v -D_WASI_EMULATED_PROCESS_CLOCKS # -mllvm -print-before-all -mllvm -debug
 
 POLYBENCH_ROOT:=PolyBenchC-4.2.1
 
@@ -58,7 +59,7 @@ benchmark-binaries:
 	@echo '[Directory] $@'
 	@mkdir -p $@
 
-$(WASI_BINARIES): %.wasm: %.c wasi-sdk Makefile
+$(WASI_BINARIES): %.wasm: %.c Makefile
 	@echo "[Compiling for WASI] $(shell basename $*)"
 	@$(CC) -O3 -I $(POLYBENCH_ROOT)/utilities -I $(shell dirname $<) $(POLYBENCH_ROOT)/utilities/polybench.c $< -DPOLYBENCH_TIME -o $@
 
