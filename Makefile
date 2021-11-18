@@ -41,6 +41,7 @@ AVAILABLE_BENCHMARKS:= $(patsubst %,$(POLYBENCH_ROOT)/%, \
 
 WASI_BINARIES:=$(patsubst %.c,%.wasm,$(AVAILABLE_BENCHMARKS))
 NATIVE_BINARIES:=$(patsubst %.c,%.native,$(AVAILABLE_BENCHMARKS))
+WASI_TEXT:=$(patsubst %.c,%.wat,$(AVAILABLE_BENCHMARKS))
 
 all: $(POLYBENCH_ROOT) wasi-sdk wasi-binaries
 
@@ -52,7 +53,7 @@ wasi-sdk:
 	@rm wasi-sdk-$(WASI_SDK_VERSION)-linux.tar.gz
 	@mv wasi-sdk-12.0 $@
 
-wasi-binaries: benchmark-binaries $(WASI_BINARIES) $(NATIVE_BINARIES)
+wasi-binaries: benchmark-binaries $(WASI_BINARIES) $(NATIVE_BINARIES) $(WASI_TEXT)
 	@mv $(WASI_BINARIES) $(NATIVE_BINARIES) $</
 
 benchmark-binaries:
@@ -62,6 +63,10 @@ benchmark-binaries:
 $(WASI_BINARIES): %.wasm: %.c Makefile
 	@echo "[Compiling for WASI] $(shell basename $*)"
 	@$(CC) -O3 -I $(POLYBENCH_ROOT)/utilities -I $(shell dirname $<) $(POLYBENCH_ROOT)/utilities/polybench.c $< -DPOLYBENCH_TIME -o $@
+
+$(WASI_TEXT): %.wat: %.wasm Makefile
+	@echo "[Generating WASI Text] $(shell basename $*)"
+	@$(MSWASM_WABT)/wasm2wat benchmark-binaries/$(shell basename $*).wasm > benchmark-binaries/$(shell basename $*).wat
 
 $(NATIVE_BINARIES): %.native: %.c wasi-sdk Makefile
 	@echo "[Compiling Native] $(shell basename $*)"
