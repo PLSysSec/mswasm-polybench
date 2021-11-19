@@ -43,7 +43,7 @@ WASI_BINARIES:=$(patsubst %.c,%.wasm,$(AVAILABLE_BENCHMARKS))
 NATIVE_BINARIES:=$(patsubst %.c,%.native,$(AVAILABLE_BENCHMARKS))
 WASI_TEXT:=$(patsubst %.c,%.wat,$(AVAILABLE_BENCHMARKS))
 
-all: $(POLYBENCH_ROOT) wasi-sdk wasi-binaries
+all: $(POLYBENCH_ROOT) wasi-sdk wasi-binaries wasi-text
 
 wasi-sdk:
 	@echo '[Downloading] WASI SDK'
@@ -53,8 +53,10 @@ wasi-sdk:
 	@rm wasi-sdk-$(WASI_SDK_VERSION)-linux.tar.gz
 	@mv wasi-sdk-12.0 $@
 
-wasi-binaries: benchmark-binaries $(WASI_BINARIES) $(NATIVE_BINARIES) $(WASI_TEXT)
+wasi-binaries: benchmark-binaries $(WASI_BINARIES) $(NATIVE_BINARIES)
 	@mv $(WASI_BINARIES) $(NATIVE_BINARIES) $</
+
+wasi-text: $(WASI_TEXT)
 
 benchmark-binaries:
 	@echo '[Directory] $@'
