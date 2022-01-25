@@ -1,0 +1,250 @@
+benchify_version = 1
+tags = ["wasi"]
+# warmup = 10
+parallel_prep = true
+# min_runs = 10
+# max_runs = 1000
+results_dir = "./benchify-results/"
+main_tool = "native"
+
+[[tools]]
+name = "native"
+program = "sh"
+existence_confirmation = ["-c", "true"]
+install_instructions = "If you don't have a shell, you've got worse problems than running these benchmarks :P"
+
+[tools.runners.wasi]
+run_cmd = "sh -c 'benchmark-binaries/{NAME}.native {...}'"
+
+[[tools]]
+name = "wasm"
+program = "witchcraft"
+existence_confirmation = ["--version"]
+install_instructions = "Make sure `witchcraft` is in the PATH"
+
+[tools.runners.wasi]
+prepare = "./rWasmPrep wasm {NAME} benchmark-binaries/{NAME}.wasm"
+run_cmd = ".generated/wasm-{NAME} {...}"
+cleanup = "rm -f .generated/wasm-{NAME}"
+
+[[tools]]
+name = "mswasm"
+program = "witchcraft"
+existence_confirmation = ["--version"]
+install_instructions = "Make sure `witchcraft` is in the PATH"
+
+[tools.runners.wasi]
+prepare = "./rWasmPrep mswasm-default {NAME} benchmark-binaries/{NAME}.mswasm --ms-wasm"
+run_cmd = ".generated/mswasm-default-{NAME} {...}"
+cleanup = "rm -f .generated/mswasm-default-{NAME}"
+
+[[tools]]
+name = "mswasm-notags"
+program = "witchcraft"
+existence_confirmation = ["--version"]
+install_instructions = "Make sure `witchcraft` is in the PATH"
+
+[tools.runners.wasi]
+prepare = "./rWasmPrep mswasm-nt {NAME} benchmark-binaries/{NAME}.mswasm --ms-wasm-no-tags"
+run_cmd = ".generated/mswasm-nt-{NAME} {...}"
+cleanup = "rm -f .generated/mswasm-nt-{NAME}"
+
+[[tools]]
+name = "mswasm-baggybounds"
+program = "witchcraft"
+existence_confirmation = ["--version"]
+install_instructions = "Make sure `witchcraft` is in the PATH"
+
+[tools.runners.wasi]
+prepare = "./rWasmPrep mswasm-bb {NAME} benchmark-binaries/{NAME}.mswasm --ms-wasm-baggy-bounds"
+run_cmd = ".generated/mswasm-bb-{NAME} {...}"
+cleanup = "rm -f .generated/mswasm-bb-{NAME}"
+
+#
+#  mmmmm         ""#           mmmmm                       #           m   mmm
+#  #   "#  mmm     #    m   m  #    #  mmm   m mm    mmm   # mm       #  m"   "
+#  #mmm#" #" "#    #    "m m"  #mmmm" #"  #  #"  #  #"  "  #"  #     #   #
+#  #      #   #    #     #m#   #    # #""""  #   #  #      #   #    #    #
+#  #      "#m#"    "mm   "#    #mmmm" "#mm"  #   #  "#mm"  #   #   #      "mmm"
+#                        m"                                       "
+#                       ""
+
+[[tests]]
+name = "2mm"
+tag = "wasi"
+file = "benchmark-binaries/2mm.mswasm"
+stdout_is_timing = true
+
+[[tests]]
+name = "3mm"
+tag = "wasi"
+file = "benchmark-binaries/3mm.mswasm"
+stdout_is_timing = true
+
+[[tests]]
+name = "adi"
+tag = "wasi"
+file = "benchmark-binaries/adi.mswasm"
+stdout_is_timing = true
+
+[[tests]]
+name = "atax"
+tag = "wasi"
+file = "benchmark-binaries/atax.mswasm"
+stdout_is_timing = true
+
+[[tests]]
+name = "bicg"
+tag = "wasi"
+file = "benchmark-binaries/bicg.mswasm"
+stdout_is_timing = true
+
+[[tests]]
+name = "cholesky"
+tag = "wasi"
+file = "benchmark-binaries/cholesky.mswasm"
+stdout_is_timing = true
+
+[[tests]]
+name = "correlation"
+tag = "wasi"
+file = "benchmark-binaries/correlation.mswasm"
+stdout_is_timing = true
+
+[[tests]]
+name = "covariance"
+tag = "wasi"
+file = "benchmark-binaries/covariance.mswasm"
+stdout_is_timing = true
+
+[[tests]]
+name = "deriche"
+tag = "wasi"
+file = "benchmark-binaries/deriche.mswasm"
+stdout_is_timing = true
+
+[[tests]]
+name = "doitgen"
+tag = "wasi"
+file = "benchmark-binaries/doitgen.mswasm"
+stdout_is_timing = true
+
+[[tests]]
+name = "durbin"
+tag = "wasi"
+file = "benchmark-binaries/durbin.mswasm"
+stdout_is_timing = true
+
+[[tests]]
+name = "fdtd-2d"
+tag = "wasi"
+file = "benchmark-binaries/fdtd-2d.mswasm"
+stdout_is_timing = true
+
+[[tests]]
+name = "floyd-warshall"
+tag = "wasi"
+file = "benchmark-binaries/floyd-warshall.mswasm"
+stdout_is_timing = true
+
+[[tests]]
+name = "gemm"
+tag = "wasi"
+file = "benchmark-binaries/gemm.mswasm"
+stdout_is_timing = true
+
+[[tests]]
+name = "gemver"
+tag = "wasi"
+file = "benchmark-binaries/gemver.mswasm"
+stdout_is_timing = true
+
+[[tests]]
+name = "gesummv"
+tag = "wasi"
+file = "benchmark-binaries/gesummv.mswasm"
+stdout_is_timing = true
+
+[[tests]]
+name = "gramschmidt"
+tag = "wasi"
+file = "benchmark-binaries/gramschmidt.mswasm"
+stdout_is_timing = true
+
+[[tests]]
+name = "heat-3d"
+tag = "wasi"
+file = "benchmark-binaries/heat-3d.mswasm"
+stdout_is_timing = true
+
+[[tests]]
+name = "jacobi-1d"
+tag = "wasi"
+file = "benchmark-binaries/jacobi-1d.mswasm"
+stdout_is_timing = true
+
+[[tests]]
+name = "jacobi-2d"
+tag = "wasi"
+file = "benchmark-binaries/jacobi-2d.mswasm"
+stdout_is_timing = true
+
+[[tests]]
+name = "ludcmp"
+tag = "wasi"
+file = "benchmark-binaries/ludcmp.mswasm"
+stdout_is_timing = true
+
+[[tests]]
+name = "lu"
+tag = "wasi"
+file = "benchmark-binaries/lu.mswasm"
+stdout_is_timing = true
+
+[[tests]]
+name = "mvt"
+tag = "wasi"
+file = "benchmark-binaries/mvt.mswasm"
+stdout_is_timing = true
+
+[[tests]]
+name = "nussinov"
+tag = "wasi"
+file = "benchmark-binaries/nussinov.mswasm"
+stdout_is_timing = true
+
+[[tests]]
+name = "seidel-2d"
+tag = "wasi"
+file = "benchmark-binaries/seidel-2d.mswasm"
+stdout_is_timing = true
+
+[[tests]]
+name = "symm"
+tag = "wasi"
+file = "benchmark-binaries/symm.mswasm"
+stdout_is_timing = true
+
+[[tests]]
+name = "syr2k"
+tag = "wasi"
+file = "benchmark-binaries/syr2k.mswasm"
+stdout_is_timing = true
+
+[[tests]]
+name = "syrk"
+tag = "wasi"
+file = "benchmark-binaries/syrk.mswasm"
+stdout_is_timing = true
+
+[[tests]]
+name = "trisolv"
+tag = "wasi"
+file = "benchmark-binaries/trisolv.mswasm"
+stdout_is_timing = true
+
+[[tests]]
+name = "trmm"
+tag = "wasi"
+file = "benchmark-binaries/trmm.mswasm"
+stdout_is_timing = true

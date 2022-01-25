@@ -1,0 +1,33 @@
+#! /bin/sh
+
+set -e
+
+if ! witchcraft --version >/dev/null; then
+    echo "Expected 'witchcraft' in PATH" 1>&2
+    exit 1
+fi
+
+if [ $# -eq 0 ]; then
+   echo "Usage: $0 {build-ident} {name} {inputfile} {witchcraft-args...}"
+   exit 1
+fi
+
+BUILD_IDENT=$1
+NAME=$2
+INPUTFILE=$3
+shift 3
+
+mkdir -p .generated
+
+GEN=.generated/build-${BUILD_IDENT}-${NAME}
+GENERATED_TGT=${GEN}/target/release/sandboxed-${NAME}
+FINAL_TGT=.generated/${BUILD_IDENT}-${NAME}
+
+if [ -x $GENERATED_TGT ]; then
+    cp ${GENERATED_TGT} ${FINAL_TGT}
+    exit 0
+fi
+
+/usr/bin/time -f '%e' -o ".generated/${BUILD_IDENT}-${NAME}.tool-time" witchcraft --wasi-executable "$@" ${INPUTFILE} ${GEN}
+(cd ${GEN} && /usr/bin/time -f '%e' -o "../${BUILD_IDENT}-${NAME}.rust-time" cargo build --release)
+cp ${GENERATED_TGT} ${FINAL_TGT}
