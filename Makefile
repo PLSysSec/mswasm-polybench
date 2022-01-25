@@ -73,7 +73,7 @@ benchmark-binaries:
 	@echo '[Directory] $@'
 	@mkdir -p $@
 
-$(MSWASM_WASI_BINARIES): %.mswasm: %.c Makefile
+$(MSWASM_WASI_BINARIES): %.mswasm: %.c Makefile $(MSWASM_LLVM_BUILD)/bin/clang $(MSWASM_WASI_LIBC)/sysroot
 	@echo "[Compiling for MSWASM] $(shell basename $*)"
 	@$(MSWASMCC) -O3 -I $(POLYBENCH_ROOT)/utilities -I $(shell dirname $<) $(POLYBENCH_ROOT)/utilities/polybench.c $< -DPOLYBENCH_TIME -o $@
 
