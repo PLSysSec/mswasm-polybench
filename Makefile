@@ -1,8 +1,19 @@
 WASI_SDK_VERSION:=12.0
 WASI_SDK_TAG:=12
 
-CC:=$(MSWASM_LLVM_BUILD)/bin/clang --target=wasm32-wasi --sysroot $(MSWASM_WASI_LIBC)/sysroot \
-	-v -D_WASI_EMULATED_PROCESS_CLOCKS # -mllvm -print-before-all -mllvm -debug
+ifeq (X$(MSWASM_LLVM_BUILD)X,XX)
+$(error Please set MSWASM_LLVM_BUILD)
+endif
+ifeq (X$(MSWASM_WASI_LIBC)X,XX)
+$(error Please set MSWASM_WASI_LIBC)
+endif
+ifeq (X$(MSWASM_WABT)X,XX)
+$(error Please set MSWASM_WABT)
+endif
+
+MSWASMCC:=$(MSWASM_LLVM_BUILD)/bin/clang --target=wasm32-wasi --sysroot $(MSWASM_WASI_LIBC)/sysroot \
+		-v -D_WASI_EMULATED_PROCESS_CLOCKS # -mllvm -print-before-all -mllvm -debug
+WASMCC:=wasi-sdk/bin/clang --sysroot wasi-sdk/share/wasi-sysroot
 
 POLYBENCH_ROOT:=PolyBenchC-4.2.1
 
@@ -39,11 +50,13 @@ AVAILABLE_BENCHMARKS:= $(patsubst %,$(POLYBENCH_ROOT)/%, \
 	stencils/seidel-2d/seidel-2d.c \
 	)
 
-WASI_BINARIES:=$(patsubst %.c,%.wasm,$(AVAILABLE_BENCHMARKS))
 NATIVE_BINARIES:=$(patsubst %.c,%.native,$(AVAILABLE_BENCHMARKS))
-WASI_TEXT:=$(patsubst %.c,%.wat,$(AVAILABLE_BENCHMARKS))
+MSWASM_WASI_BINARIES:=$(patsubst %.c,%.mswasm,$(AVAILABLE_BENCHMARKS))
+MSWASM_WASI_TEXT:=$(patsubst %.c,%.mswat,$(AVAILABLE_BENCHMARKS))
+WASM_WASI_BINARIES:=$(patsubst %.c,%.wasm,$(AVAILABLE_BENCHMARKS))
+WASM_WASI_TEXT:=$(patsubst %.c,%.wat,$(AVAILABLE_BENCHMARKS))
 
-all: $(POLYBENCH_ROOT) wasi-sdk wasi-binaries wasi-text
+all: $(POLYBENCH_ROOT) wasi-sdk wasi-binaries
 
 wasi-sdk:
 	@echo '[Downloading] WASI SDK'
@@ -53,35 +66,44 @@ wasi-sdk:
 	@rm wasi-sdk-$(WASI_SDK_VERSION)-linux.tar.gz
 	@mv wasi-sdk-12.0 $@
 
-wasi-binaries: benchmark-binaries $(WASI_BINARIES) $(NATIVE_BINARIES)
-	@mv $(WASI_BINARIES) $(NATIVE_BINARIES) $</
-
-wasi-text: $(WASI_TEXT)
+wasi-binaries: benchmark-binaries $(MSWASM_WASI_BINARIES) $(MSWASM_WASI_TEXT) $(WASM_WASI_BINARIES) $(WASM_WASI_TEXT) $(NATIVE_BINARIES)
+	@cp $(MSWASM_WASI_BINARIES) $(MSWASM_WASI_TEXT) $(WASM_WASI_BINARIES) $(WASM_WASI_TEXT) $(NATIVE_BINARIES) $</
 
 benchmark-binaries:
 	@echo '[Directory] $@'
 	@mkdir -p $@
 
-$(WASI_BINARIES): %.wasm: %.c Makefile
-	@echo "[Compiling for WASI] $(shell basename $*)"
-	@$(CC) -O3 -I $(POLYBENCH_ROOT)/utilities -I $(shell dirname $<) $(POLYBENCH_ROOT)/utilities/polybench.c $< -DPOLYBENCH_TIME -o $@
+$(MSWASM_WASI_BINARIES): %.mswasm: %.c Makefile
+	@echo "[Compiling for MSWASM] $(shell basename $*)"
+	@$(MSWASMCC) -O3 -I $(POLYBENCH_ROOT)/utilities -I $(shell dirname $<) $(POLYBENCH_ROOT)/utilities/polybench.c $< -DPOLYBENCH_TIME -o $@
 
-$(WASI_TEXT): %.wat: %.wasm Makefile
-	@echo "[Generating WASI Text] $(shell basename $*)"
-	@$(MSWASM_WABT)/wasm2wat benchmark-binaries/$(shell basename $*).wasm > benchmark-binaries/$(shell basename $*).wat
+$(MSWASM_WASI_TEXT): %.mswat: %.mswasm Makefile
+	@echo "[Generating MSWASM Text] $(shell basename $*)"
+	@$(MSWASM_WABT)/wasm2wat $< > $@
+
+$(WASM_WASI_BINARIES): %.wasm: %.c Makefile
+	@echo "[Compiling for WASM] $(shell basename $*)"
+	@$(WASMCC) -O3 -I $(POLYBENCH_ROOT)/utilities -I $(shell dirname $<) $(POLYBENCH_ROOT)/utilities/polybench.c $< -DPOLYBENCH_TIME -o $@
+
+$(WASM_WASI_TEXT): %.wat: %.wasm Makefile
+	@echo "[Generating WASM Text] $(shell basename $*)"
+	@wasm2wat $< > $@
 
 $(NATIVE_BINARIES): %.native: %.c wasi-sdk Makefile
 	@echo "[Compiling Native] $(shell basename $*)"
 	@clang -O3 -I $(POLYBENCH_ROOT)/utilities -I $(shell dirname $<) $(POLYBENCH_ROOT)/utilities/polybench.c $< -DPOLYBENCH_TIME -lm -o $@
 
 clean:
-	@rm -rf $(WASI_BINARIES) $(NATIVE_BINARIES) benchmark-binaries *~
+	@rm -rf $(MSWASM_WASI_BINARIES) $(NATIVE_BINARIES) benchmark-binaries *~
 	@echo "[Cleaned]"
 
 PolyBenchC-4.2.1:
 	@echo '[Downloading] PolyBench/C'
-	@git clone 'https://github.com/MatthiasJReisinger/PolyBenchC-4.2.1' $(POLYBENCH_ROOT)
+	@git clone 'https://github.com/MatthiasJReisinger/PolyBenchC-4.2.1' --depth 1 $@
 
 nuke: clean
 	@rm -rf wasi-sdk* $(POLYBENCH_ROOT)
 	@echo "[Nuked]"
+
+# Force maintaining all intermediate files
+.SECONDARY:
