@@ -4,3 +4,4 @@ PolyBenchC-4.2.1
 .envrc
 wasi-sdk
 .generated
+benchify-results/

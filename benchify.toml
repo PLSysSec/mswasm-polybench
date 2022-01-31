@@ -28,7 +28,7 @@ run_cmd = ".generated/wasm-{NAME} {...}"
 cleanup = "rm -f .generated/wasm-{NAME}"
 
 [[tools]]
-name = "mswasm"
+name = "mswasm-default"
 program = "witchcraft"
 existence_confirmation = ["--version"]
 install_instructions = "Make sure `witchcraft` is in the PATH"
@@ -37,6 +37,17 @@ install_instructions = "Make sure `witchcraft` is in the PATH"
 prepare = "./rWasmPrep mswasm-default {NAME} benchmark-binaries/{NAME}.mswasm --ms-wasm"
 run_cmd = ".generated/mswasm-default-{NAME} {...}"
 cleanup = "rm -f .generated/mswasm-default-{NAME}"
+
+[[tools]]
+name = "mswasm-packedtags"
+program = "witchcraft"
+existence_confirmation = ["--version"]
+install_instructions = "Make sure `witchcraft` is in the PATH"
+
+[tools.runners.wasi]
+prepare = "./rWasmPrep mswasm-packedtags {NAME} benchmark-binaries/{NAME}.mswasm --ms-wasm-packed-tags"
+run_cmd = ".generated/mswasm-packedtags-{NAME} {...}"
+cleanup = "rm -f .generated/mswasm-packedtags-{NAME}"
 
 [[tools]]
 name = "mswasm-notags"
