@@ -71,6 +71,25 @@ prepare = "./rWasmPrep mswasm-bb {NAME} benchmark-binaries/{NAME}.mswasm --ms-wa
 run_cmd = ".generated/mswasm-bb-{NAME} {...}"
 cleanup = "rm -f .generated/mswasm-bb-{NAME}"
 
+[[tools]]
+name = "wasm-graal"
+program = "mx"
+existence_confirmation = ["--version"]
+install_instructions = "tbd"
+
+[tools.runners.wasi]
+run_cmd = "~/mswasm/mswasm-graal/vm/latest_graalvm_wasm/bin/wasm --Builtins=wasi_snapshot_preview1 benchmark-binaries/{NAME}.wasm"
+
+[[tools]]
+name = "mswasm-graal"
+program = "mx"
+existence_confirmation = ["--version"]
+install_instructions = "tbd"
+
+[tools.runners.wasi]
+run_cmd = "~/mswasm/mswasm-graal/vm/latest_graalvm_mswasm/bin/wasm --Builtins=wasi_snapshot_preview1 benchmark-binaries/{NAME}.mswasm"
+
+
 #
 #  mmmmm         ""#           mmmmm                       #           m   mmm
 #  #   "#  mmm     #    m   m  #    #  mmm   m mm    mmm   # mm       #  m"   "
