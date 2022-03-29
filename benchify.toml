@@ -1,6 +1,6 @@
 benchify_version = 1
 tags = ["wasi"]
-# warmup = 10
+# warmup = 2
 parallel_prep = true
 # min_runs = 10
 # max_runs = 1000
