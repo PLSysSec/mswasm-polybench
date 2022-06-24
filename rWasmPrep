@@ -2,13 +2,21 @@
 
 set -e
 
-if ! witchcraft --version >/dev/null; then
-    echo "Expected 'witchcraft' in PATH" 1>&2
+if ! rwasm --version >/dev/null; then
+  if ! witchcraft --version >/dev/null; then
+    echo "Expected 'rwasm' in PATH" 1>&2
     exit 1
+  else
+    echo "Found 'witchcraft' in PATH. The tool has been renamed to 'rwasm'. Rebuild an reinstall." 1>&2
+    exit 1
+  fi
+elif ! rwasm --version 2>&1 | grep mswasm >/dev/null; then
+  echo "Found 'rwasm' in PATH, but it does not support mswasm. Rebuild correct version." 1>&2
+  exit 1
 fi
 
 if [ $# -eq 0 ]; then
-   echo "Usage: $0 {build-ident} {name} {inputfile} {witchcraft-args...}"
+   echo "Usage: $0 {build-ident} {name} {inputfile} {rwasm-args...}"
    exit 1
 fi
 
@@ -28,6 +36,6 @@ if [ -x $GENERATED_TGT ]; then
     exit 0
 fi
 
-/usr/bin/time -f '%e' -o ".generated/${BUILD_IDENT}-${NAME}.tool-time" witchcraft --wasi-executable "$@" ${INPUTFILE} ${GEN}
+/usr/bin/time -f '%e' -o ".generated/${BUILD_IDENT}-${NAME}.tool-time" rwasm --wasi-executable "$@" ${INPUTFILE} ${GEN}
 (cd ${GEN} && /usr/bin/time -f '%e' -o "../${BUILD_IDENT}-${NAME}.rust-time" cargo build --release)
 cp ${GENERATED_TGT} ${FINAL_TGT}

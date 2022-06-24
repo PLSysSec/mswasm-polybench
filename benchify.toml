@@ -18,9 +18,9 @@ run_cmd = "sh -c 'benchmark-binaries/{NAME}.native {...}'"
 
 [[tools]]
 name = "wasm"
-program = "witchcraft"
+program = "rwasm"
 existence_confirmation = ["--version"]
-install_instructions = "Make sure `witchcraft` is in the PATH"
+install_instructions = "Make sure `rwasm` is in the PATH"
 
 [tools.runners.wasi]
 prepare = "./rWasmPrep wasm {NAME} benchmark-binaries/{NAME}.wasm"
@@ -29,9 +29,9 @@ cleanup = "rm -f .generated/wasm-{NAME}"
 
 [[tools]]
 name = "mswasm-default"
-program = "witchcraft"
+program = "rwasm"
 existence_confirmation = ["--version"]
-install_instructions = "Make sure `witchcraft` is in the PATH"
+install_instructions = "Make sure `rwasm` is in the PATH"
 
 [tools.runners.wasi]
 prepare = "./rWasmPrep mswasm-default {NAME} benchmark-binaries/{NAME}.mswasm --ms-wasm"
@@ -40,9 +40,9 @@ cleanup = "rm -f .generated/mswasm-default-{NAME}"
 
 [[tools]]
 name = "mswasm-packedtags"
-program = "witchcraft"
+program = "rwasm"
 existence_confirmation = ["--version"]
-install_instructions = "Make sure `witchcraft` is in the PATH"
+install_instructions = "Make sure `rwasm` is in the PATH"
 
 [tools.runners.wasi]
 prepare = "./rWasmPrep mswasm-packedtags {NAME} benchmark-binaries/{NAME}.mswasm --ms-wasm-packed-tags"
@@ -51,9 +51,9 @@ cleanup = "rm -f .generated/mswasm-packedtags-{NAME}"
 
 [[tools]]
 name = "mswasm-notags"
-program = "witchcraft"
+program = "rwasm"
 existence_confirmation = ["--version"]
-install_instructions = "Make sure `witchcraft` is in the PATH"
+install_instructions = "Make sure `rwasm` is in the PATH"
 
 [tools.runners.wasi]
 prepare = "./rWasmPrep mswasm-nt {NAME} benchmark-binaries/{NAME}.mswasm --ms-wasm-no-tags"
@@ -62,9 +62,9 @@ cleanup = "rm -f .generated/mswasm-nt-{NAME}"
 
 [[tools]]
 name = "mswasm-baggybounds"
-program = "witchcraft"
+program = "rwasm"
 existence_confirmation = ["--version"]
-install_instructions = "Make sure `witchcraft` is in the PATH"
+install_instructions = "Make sure `rwasm` is in the PATH"
 
 [tools.runners.wasi]
 prepare = "./rWasmPrep mswasm-bb {NAME} benchmark-binaries/{NAME}.mswasm --ms-wasm-baggy-bounds"
