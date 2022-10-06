@@ -78,7 +78,7 @@ existence_confirmation = ["--version"]
 install_instructions = "tbd"
 
 [tools.runners.wasi]
-run_cmd = "~/mswasm/mswasm-graal/vm/latest_graalvm_wasm/bin/wasm --Builtins=wasi_snapshot_preview1 benchmark-binaries/{NAME}.wasm"
+run_cmd = "wasm-graal --Builtins=wasi_snapshot_preview1 benchmark-binaries/{NAME}.wasm"
 
 [[tools]]
 name = "mswasm-graal"
@@ -87,7 +87,7 @@ existence_confirmation = ["--version"]
 install_instructions = "tbd"
 
 [tools.runners.wasi]
-run_cmd = "~/mswasm/mswasm-graal/vm/latest_graalvm_mswasm/bin/wasm --Builtins=wasi_snapshot_preview1 benchmark-binaries/{NAME}.mswasm"
+run_cmd = "mswasm-graal --Builtins=wasi_snapshot_preview1 benchmark-binaries/{NAME}.mswasm"
 
 
 #
