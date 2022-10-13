@@ -12,6 +12,24 @@ This artifact is focused on Section 7 - Performance Evaluation. Namely,
 
 ## Installation
 
+We provide a Docker container to create an environment to run these benchmarks at
+[ghcr.io/plsyssec/mswasm](https://ghcr.io/plsyssec/mswasm).  To install, install
+[Docker](https://www.docker.com) and run
+
+```shell
+docker pull ghcr.io/plsyssec/mswasm:latest
+```
+
+This will download the container. The container is around 80GB. Once the
+container is downloaded, you can run it with commands such as
+
+```shell
+docker run -it mswasm:latest
+```
+
+You may also use the Docker desktop interface if desired.
+
+### Alternate Method: Installation via Dockerfile
 We provide a [Dockerfile](Dockerfile) to create an environment to run these
 benchmarks. To install, install [Docker](https://www.docker.com/), and in the
 same directory as the Dockerfile, run
@@ -22,7 +40,9 @@ docker build -t mswasm .
 
 This will build the container. This will take a reasonable amount of time
 (around 45 minutes on our host machine) and require internet for cloning git
-repositories. Once the container is built, you can run it with commands such as
+repositories. This will take more than 32GB of RAM due to compilation, and the
+final image will be around 80GB. Once the container is built, you can run it
+with commands such as
 
 ```shell
 docker run -it mswasm:latest
