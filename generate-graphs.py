@@ -22,7 +22,7 @@ allowed_executors = {
     "mswasm-graal": "Graal$_{ST}$",
 }
 
-data = pd.read_csv('./raw_data/data.csv')
+data = pd.read_csv(sys.argv[1])
 data = data[data['Executor'].isin(allowed_executors)]
 data = data.rename(columns={'Executor': 'Executor-ID'})
 
