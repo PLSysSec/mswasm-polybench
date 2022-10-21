@@ -108,6 +108,31 @@ It can be run with the same instructions as before: `cd mswasm-polybench`
 `benchify benchify.toml` with output generated on stdout and in the
 benchify-results folder.
 
+To generate the graphs used in the paper, you can use the
+[`generate-graphs.py`](generate-graphs.py) script. If you wish to run
+the script from the container, run `git pull` from the `mswasm-polybench` repo
+to pull the script, and then run `apt-get update && apt-get install
+python3-matplotlib python3-pandas python3-seaborn` to install needed
+dependencies. The script can then be run as
+
+```shell
+python3 <path to generate-graphs.py> <path to benchify csv data in benchify-results>
+```
+
+The script will generate 5 graphs as pdfs in the current working directory.
+You can extract these graphs from the container with `docker cp`, such as
+
+```shell
+docker container ls # find the name of your container
+docker cp <container name>:<path to pdf> <path on local machine to copy to>
+```
+
+Alternatively, the python script only requires the benchify csv data, so
+it does not need to be run on the container. `docker cp` can be used to
+retrieve the benchify csv data, then the python script can be run on
+a local machine that has python3 and matplotlib, pandas, and seaborn
+installed.
+
 ## Additional Artifact Description
 
 The artifact is organized around the following repositories:
